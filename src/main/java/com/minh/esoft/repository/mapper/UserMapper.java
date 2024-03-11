@@ -5,6 +5,7 @@ import com.minh.esoft.repository.entity.AccountEntity;
 import com.minh.esoft.repository.entity.UserEntity;
 import com.minh.esoft.repository.request.UserRegisterRequest;
 import com.minh.esoft.repository.response.UserRegisterResponse;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -24,5 +25,6 @@ public interface UserMapper {
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
+    @InheritConfiguration
     UserEntity mapUserRegisterRequestAndAccountEntity2Entity(UserRegisterRequest userRegisterRequest, AccountEntity accountEntity);
 }
