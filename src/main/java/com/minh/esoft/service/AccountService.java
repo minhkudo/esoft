@@ -26,6 +26,7 @@ public class AccountService {
         accountEntity.setUsername(userRegisterRequest.getUsername());
         accountEntity.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
         accountEntity.setStatus(AccountStatusEnum.ACTIVE);
+        accountEntity.setRole(userRegisterRequest.getRole());
 
         return accountRepository.save(accountEntity);
     }

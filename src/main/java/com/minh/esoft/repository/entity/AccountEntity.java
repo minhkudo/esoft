@@ -1,9 +1,7 @@
 package com.minh.esoft.repository.entity;
 
 import com.minh.esoft.common.enums.AccountStatusEnum;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,6 +24,7 @@ public class AccountEntity extends BaseEntity {
     @Column(name = "role")
     private String role;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private AccountStatusEnum status;
 }
