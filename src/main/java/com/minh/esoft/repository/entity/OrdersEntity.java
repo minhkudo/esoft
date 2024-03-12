@@ -1,5 +1,6 @@
 package com.minh.esoft.repository.entity;
 
+import com.minh.esoft.auth.JwtUserDetail;
 import com.minh.esoft.common.enums.OrderCategoryEnum;
 import com.minh.esoft.common.enums.OrderServiceEnum;
 import com.minh.esoft.common.enums.OrderStatusEnum;
@@ -8,9 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "orders")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,20 +32,26 @@ public class OrdersEntity extends BaseEntity {
     private String notes;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_category_code")
+    @Column(name = "orders_category_code")
     private OrderCategoryEnum orderCategoryCode;
 
     @Column(name = "quantity")
     private Long quantity;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_status")
+    @Column(name = "orders_status")
     private OrderStatusEnum orderStatus;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_service_code")
+    @Column(name = "orders_service_code")
     private OrderServiceEnum orderServiceCode;
 
     @Column(name = "user_id")
     private Long userId;
+
+    @PrePersist
+    public void prePersist() {
+        JwtUserDetail jwtUserDetail = (JwtUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userId = jwtUserDetail.getUserId();
+    }
 }

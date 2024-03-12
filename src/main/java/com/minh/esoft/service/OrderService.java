@@ -1,5 +1,6 @@
 package com.minh.esoft.service;
 
+import com.minh.esoft.common.enums.OrderStatusEnum;
 import com.minh.esoft.repository.OrdersRepository;
 import com.minh.esoft.repository.entity.OrdersEntity;
 import com.minh.esoft.repository.mapper.OrdersMapper;
@@ -22,6 +23,7 @@ public class OrderService {
         String orderCode = PATTERN_ORDER + Instant.now().getEpochSecond();
         OrdersEntity ordersEntity = OrdersMapper.INSTANCE.map2CreateOrderEntity(orderRequest);
         ordersEntity.setCode(orderCode);
+        ordersEntity.setOrderStatus(OrderStatusEnum.INITIAL);
 
         ordersEntity = ordersRepository.save(ordersEntity);
         return OrdersMapper.INSTANCE.map2OrderResponse(ordersEntity);

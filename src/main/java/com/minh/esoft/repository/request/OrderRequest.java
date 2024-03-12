@@ -3,9 +3,11 @@ package com.minh.esoft.repository.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.minh.esoft.common.enums.OrderCategoryEnum;
 import com.minh.esoft.common.enums.OrderServiceEnum;
+import com.minh.esoft.common.enums.OrderStatusEnum;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 @Data
 public class OrderRequest {

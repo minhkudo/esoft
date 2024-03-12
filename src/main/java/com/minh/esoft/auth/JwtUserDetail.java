@@ -12,13 +12,17 @@ import java.util.Collections;
 
 @Data
 @AllArgsConstructor
-public class JwtUserDetailsImpl implements UserDetails {
+public class JwtUserDetail implements UserDetails {
 
     AccountEntity accountEntity;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(accountEntity.getRole()));
+    }
+
+    public Long getUserId() {
+        return accountEntity.getId();
     }
 
     @Override

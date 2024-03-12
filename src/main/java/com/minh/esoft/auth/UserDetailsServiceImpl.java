@@ -22,6 +22,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (accountEntity == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return new JwtUserDetailsImpl(accountEntity);
+        return new JwtUserDetail(accountEntity);
     }
 }
