@@ -1,14 +1,16 @@
 package com.minh.esoft.repository.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
-@Data
+@Getter
+@Setter
+@MappedSuperclass
 public abstract class BaseEntity {
 
     @Id

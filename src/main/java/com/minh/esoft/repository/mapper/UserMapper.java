@@ -25,6 +25,5 @@ public interface UserMapper {
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @InheritConfiguration
     UserEntity mapUserRegisterRequestAndAccountEntity2Entity(UserRegisterRequest userRegisterRequest, AccountEntity accountEntity);
 }

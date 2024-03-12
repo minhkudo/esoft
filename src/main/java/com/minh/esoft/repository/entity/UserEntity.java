@@ -9,7 +9,8 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "users")
 @Data
-@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserEntity extends BaseEntity {
     @Column(name = "first_name")
