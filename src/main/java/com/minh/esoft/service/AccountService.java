@@ -1,11 +1,9 @@
 package com.minh.esoft.service;
 
 import com.minh.esoft.common.exception.DataAlreadyExistsException;
-import com.minh.esoft.common.status.AccountStatusEnum;
+import com.minh.esoft.common.enums.AccountStatusEnum;
 import com.minh.esoft.repository.AccountRepository;
-import com.minh.esoft.repository.UserRepository;
 import com.minh.esoft.repository.entity.AccountEntity;
-import com.minh.esoft.repository.entity.UserEntity;
 import com.minh.esoft.repository.request.UserRegisterRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
