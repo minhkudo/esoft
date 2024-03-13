@@ -52,6 +52,6 @@ public class OrdersEntity extends BaseEntity {
     @PrePersist
     public void prePersist() {
         JwtUserDetail jwtUserDetail = (JwtUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        userId = jwtUserDetail.getUserId();
+        userId = jwtUserDetail.getAccountId();
     }
 }

@@ -21,7 +21,7 @@ public class JwtUserDetail implements UserDetails {
         return Collections.singleton(new SimpleGrantedAuthority(accountEntity.getRole()));
     }
 
-    public Long getUserId() {
+    public Long getAccountId() {
         return accountEntity.getId();
     }
 

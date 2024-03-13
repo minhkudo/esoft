@@ -10,7 +10,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 
 @Data
-public class OrderRequest {
+public class OrderCreateRequest {
     @NotNull
     private String name;
     private String description;
@@ -21,7 +21,4 @@ public class OrderRequest {
     private Long quantity;
     @NotNull
     private OrderServiceEnum orderServiceCode;
-
-    @JsonIgnore
-    private Long accountId;
 }
