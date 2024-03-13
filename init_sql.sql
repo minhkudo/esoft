@@ -101,3 +101,14 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_UN` (`account_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+
+INSERT INTO minh_esoft.accounts
+(username, password, `role`, status, created_at, created_by, updated_at, updated_by, deleted_at)
+VALUES('admin', '$2a$10$KXuF6FvsAgEE9mDRMlhtU.6KnBn82BK/jax9o.Uc1KYg84MguWXW2', 'ADMIN', 'ACTIVE', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO minh_esoft.accounts
+(username, password, `role`, status, created_at, created_by, updated_at, updated_by, deleted_at)
+VALUES('esoft', '$2a$10$ct1iHZGibpw5bPFWuOmVqustkTwcWIOwZ8mOo5tuVpvkLPkgcLaQy', 'CUSTOMER', 'ACTIVE', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO minh_esoft.accounts
+(username, password, `role`, status, created_at, created_by, updated_at, updated_by, deleted_at)
+VALUES('minh', '$2a$10$Th0obMU60zfPT2/i71nMz.ZtWRtvzVkyLYlQcNlqS9lzi1U9Zu7Gm', 'CUSTOMER', 'ACTIVE', NULL, NULL, NULL, NULL, NULL);
