@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -43,7 +44,7 @@ public class WebSecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry.requestMatchers("/auth/*","/v3/api-docs/**", "/swagger-ui/**") // Cho phép tất cả mọi người truy cập vào 2 địa chỉ này
+                        expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry.requestMatchers("/auth/*", "/v3/api-docs/**", "/swagger-ui/**") // Cho phép tất cả mọi người truy cập vào 2 địa chỉ này
                                 .permitAll()
                                 .anyRequest().authenticated() // Tất cả các request khác đều cần phải xác thực mới được truy cập
 
@@ -55,12 +56,13 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(jwtUserDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

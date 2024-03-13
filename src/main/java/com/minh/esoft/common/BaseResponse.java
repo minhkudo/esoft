@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,6 +29,10 @@ public class BaseResponse<T> {
 
     public BaseResponse(String message) {
         this.meta = new Meta(message);
+    }
+
+    public BaseResponse(int code, String message) {
+        this.meta = new Meta(code, message);
     }
 
     public BaseResponse(String message, T data) {
@@ -52,6 +57,16 @@ public class BaseResponse<T> {
         return ResponseEntity.status(baseResponse.getMeta().getStatus()).body(baseResponse);
     }
 
+    public static <T> ResponseEntity<?> error(HttpStatus httpStatus) {
+        BaseResponse<T> baseResponse = new BaseResponse<>(httpStatus.value(), httpStatus.getReasonPhrase());
+        return ResponseEntity.status(httpStatus.value()).body(baseResponse);
+    }
+
+    public static <T> ResponseEntity<?> error(HttpStatus httpStatus, String message) {
+        BaseResponse<T> baseResponse = new BaseResponse<>(httpStatus.value(), (message == null) ? httpStatus.getReasonPhrase() : message);
+        return ResponseEntity.status(httpStatus.value()).body(baseResponse);
+    }
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @AllArgsConstructor
@@ -69,6 +84,11 @@ public class BaseResponse<T> {
 
         public Meta(String message) {
             this.code = 200;
+            this.message = message;
+        }
+
+        public Meta(int code, String message) {
+            this.code = code;
             this.message = message;
         }
 
