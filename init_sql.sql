@@ -23,7 +23,7 @@ CREATE TABLE `orders` (
   `code` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
-  `notes` varchar(255) NOT NULL,
+  `notes` varchar(255) DEFAULT NULL,
   `orders_category_code` varchar(255) NOT NULL,
   `quantity` bigint(20) NOT NULL DEFAULT '0',
   `orders_status` varchar(255) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE `orders` (
   `updated_by` varchar(255) DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 
 -- minh_esoft.orders_category definition
