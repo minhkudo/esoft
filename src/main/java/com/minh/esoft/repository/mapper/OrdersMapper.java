@@ -1,5 +1,6 @@
 package com.minh.esoft.repository.mapper;
 
+import com.minh.esoft.common.ultils.DateTimeUltis;
 import com.minh.esoft.repository.entity.OrdersEntity;
 import com.minh.esoft.repository.request.OrderCreateRequest;
 import com.minh.esoft.repository.request.OrderUpdateRequest;
@@ -8,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = DateTimeUltis.class)
 public interface OrdersMapper {
     OrdersMapper INSTANCE = Mappers.getMapper(OrdersMapper.class);
 

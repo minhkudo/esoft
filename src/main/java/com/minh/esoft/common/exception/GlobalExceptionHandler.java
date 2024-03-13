@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@ResponseBody
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({ApplicationException.class})  // Có thể bắt nhiều loại exception
@@ -17,7 +18,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({AuthenticationException.class})
-    @ResponseBody
     public ResponseEntity<?> handleAuthenticationException(AuthenticationException ex) {
         return BaseResponse.error(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }

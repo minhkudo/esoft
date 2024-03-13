@@ -9,6 +9,7 @@ import java.time.Instant;
 
 @Data
 public class OrderResponse {
+    private Long id;
     private String code;
     private String name;
     private String description;
@@ -17,9 +18,9 @@ public class OrderResponse {
     private Long quantity;
     private OrderStatusEnum orderStatus;
     private OrderServiceEnum orderServiceCode;
-    private Instant createdAt;
-    private Instant updatedAt;
-    private Instant deletedAt;
+    private Long createdAt;
+    private Long updatedAt;
+    private Long deletedAt;
     private String createdBy;
     private String updatedBy;
 }

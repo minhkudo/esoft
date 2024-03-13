@@ -3,16 +3,12 @@ package com.minh.esoft.repository.request;
 import com.minh.esoft.common.enums.OrderCategoryEnum;
 import com.minh.esoft.common.enums.OrderServiceEnum;
 import jakarta.validation.constraints.Min;
+import lombok.Builder;
 import lombok.Data;
 
-import java.time.Instant;
-
 @Data
+@Builder
 public class OrderQueryRequest {
-    @Min(0)
-    private Long page;
-    @Min(5)
-    private Long size;
     private String name;
     private String description;
     private OrderCategoryEnum orderCategoryEnum;

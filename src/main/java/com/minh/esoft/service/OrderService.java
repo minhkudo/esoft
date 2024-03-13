@@ -12,14 +12,18 @@ import com.minh.esoft.repository.request.OrderCreateRequest;
 import com.minh.esoft.repository.request.OrderQueryRequest;
 import com.minh.esoft.repository.request.OrderUpdateRequest;
 import com.minh.esoft.repository.response.OrderResponse;
+import com.minh.esoft.repository.specifications.OrderSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -30,9 +34,29 @@ public class OrderService {
     private final String PATTERN_ORDER = "ESOFT.";
     private final OrdersRepository ordersRepository;
 
-    public List<OrderResponse> getOrder(OrderQueryRequest orderQueryRequest) {
+    public Page<OrderResponse> getOrder(int page, int size, OrderQueryRequest orderQueryRequest) {
+        Specification<OrdersEntity> specs = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+        JwtUserDetail jwtUserDetail = (JwtUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return new ArrayList<>();
+        if (jwtUserDetail.getAccountId() != null) {
+            specs = specs.and(OrderSpecification.userId(jwtUserDetail.getAccountId()));
+        }
+        if (StringUtils.hasText(orderQueryRequest.getName())) {
+            specs = specs.and(OrderSpecification.name(orderQueryRequest.getName()));
+        }
+        if (StringUtils.hasText(orderQueryRequest.getDescription())) {
+            specs = specs.and(OrderSpecification.description(orderQueryRequest.getDescription()));
+        }
+        if (orderQueryRequest.getCreatedAtFrom() != null) {
+            specs = specs.and(OrderSpecification.createdAtFrom(Instant.ofEpochSecond(orderQueryRequest.getCreatedAtFrom())));
+        }
+        if (orderQueryRequest.getCreatedAtTo() != null) {
+            specs = specs.and(OrderSpecification.createdAtFrom(Instant.ofEpochSecond(orderQueryRequest.getCreatedAtTo())));
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        return ordersRepository.findAll(specs, pageable)
+                .map(OrdersMapper.INSTANCE::map2OrderResponse);
     }
 
     public OrderResponse createOrder(OrderCreateRequest orderCreateRequest) {
@@ -58,7 +82,7 @@ public class OrderService {
         }
 
         if (ordersEntity.getOrderStatus() != OrderStatusEnum.INITIAL) {
-            throw new DataNotUpdateException("Trạng thái đơn hàng trong quá trình xử lý không thể thay đổi");
+            throw new DataNotUpdateException("Không thể thay đổi đơn hàng");
         }
 
         OrdersMapper.INSTANCE.mapToOrderEntity(ordersEntity, orderUpdateRequest);
@@ -80,9 +104,10 @@ public class OrderService {
         }
 
         if (ordersEntity.getOrderStatus() != OrderStatusEnum.INITIAL) {
-            throw new DataNotUpdateException("Trạng thái đơn hàng trong quá trình xử lý không thể thay đổi");
+            throw new DataNotUpdateException("Không thể thay đổi đơn hàng");
         }
 
+        ordersEntity.setOrderStatus(OrderStatusEnum.CANCELLED);
         ordersEntity.setDeletedAt(Instant.now());
         ordersEntity = ordersRepository.save(ordersEntity);
         return ordersEntity.getDeletedAt() != null;

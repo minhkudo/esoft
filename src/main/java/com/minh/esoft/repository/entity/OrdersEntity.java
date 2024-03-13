@@ -18,6 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class OrdersEntity extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "code")
     private String code;

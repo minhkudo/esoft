@@ -19,10 +19,6 @@ import java.time.Instant;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @CreationTimestamp
     @Column(name = "created_at")
     private Instant createdAt;
@@ -42,21 +38,21 @@ public abstract class BaseEntity {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @PrePersist
-    public void prePersist() {
-        JwtUserDetail jwtUserDetail = (JwtUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (jwtUserDetail != null) {
-            createdBy = jwtUserDetail.getUsername();
-        }
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        JwtUserDetail jwtUserDetail = (JwtUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (jwtUserDetail != null) {
-            updatedBy = jwtUserDetail.getUsername();
-        }
-    }
+//    @PrePersist
+//    public void prePersist() {
+//        JwtUserDetail jwtUserDetail = (JwtUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        if (jwtUserDetail != null) {
+//            createdBy = jwtUserDetail.getUsername();
+//        }
+//    }
+//
+//    @PreUpdate
+//    public void preUpdate() {
+//        JwtUserDetail jwtUserDetail = (JwtUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        if (jwtUserDetail != null) {
+//            updatedBy = jwtUserDetail.getUsername();
+//        }
+//    }
 //
 //    private String getValue(String var) {
 //        if (var == null) {

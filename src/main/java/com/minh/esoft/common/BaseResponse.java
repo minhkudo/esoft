@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 @Setter
 public class BaseResponse<T> {
     private Meta meta;
+    private PageSize pageSize;
     private T data;
 
     public BaseResponse(T data) {
@@ -40,12 +42,29 @@ public class BaseResponse<T> {
         this.data = data;
     }
 
+    public BaseResponse(String message, T data, PageSize page) {
+        this.meta = new Meta(message);
+        this.data = data;
+        this.pageSize = page;
+    }
+
+    public BaseResponse(T data, PageSize page) {
+        this.meta = new Meta();
+        this.data = data;
+        this.pageSize = page;
+    }
+
     public BaseResponse(ApplicationException applicationException) {
         this.meta = new Meta(applicationException.getErrorCode(), applicationException.getMessage());
     }
 
     public static <T> ResponseEntity<?> success(T body) {
         return ResponseEntity.ok(new BaseResponse<T>(body));
+    }
+
+    public static <T> ResponseEntity<?> success(Page<T> page) {
+        PageSize pageSize = new PageSize(page.getTotalPages(), page.getTotalElements(), page.getSize(), page.getNumber());
+        return ResponseEntity.ok(new BaseResponse(page.getContent(), pageSize));
     }
 
     public static <T> ResponseEntity<?> success(String message, T body) {
@@ -87,15 +106,28 @@ public class BaseResponse<T> {
             this.message = message;
         }
 
-        public Meta(int code, String message) {
-            this.code = code;
-            this.message = message;
-        }
+//        public Meta(int code, String message) {
+//            this.code = code;
+//            this.message = message;
+//        }
 
         public Meta(Integer errorCode, String message) {
             this.status = (errorCode == null) ? 200 : (errorCode / 100000);
             this.code = errorCode;
             this.message = message;
         }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    private static class PageSize {
+        private Integer totalPage;
+        private Long totalElement;
+        private Integer size;
+        private Integer page;
+
     }
 }
