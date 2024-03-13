@@ -1,5 +1,6 @@
 package com.minh.esoft.auth;
 
+import com.minh.esoft.common.enums.AccountStatusEnum;
 import com.minh.esoft.repository.AccountRepository;
 import com.minh.esoft.repository.entity.AccountEntity;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AccountEntity accountEntity = accountRepository.findAccountEntityByUsername(username);
+        AccountEntity accountEntity = accountRepository.findAccountEntityByUsernameAndStatus(username, AccountStatusEnum.ACTIVE);
         if (accountEntity == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
