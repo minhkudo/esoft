@@ -19,8 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/order")
 @AllArgsConstructor
@@ -52,6 +50,12 @@ public class OrdersController {
                 .build();
         Page<OrderResponse> pageResponse = orderService.getOrder(page, size, orderQueryRequest);
         return BaseResponse.success(pageResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id) throws DataNotFoundException, DataNotRelevantToUserException {
+        OrderResponse orderResponse = orderService.getOrderById(id);
+        return BaseResponse.success(orderResponse);
     }
 
     @PostMapping

@@ -1,7 +1,6 @@
 package com.minh.esoft.service;
 
 import com.minh.esoft.auth.JwtUserDetail;
-import com.minh.esoft.common.enums.OrderCategoryEnum;
 import com.minh.esoft.common.enums.OrderStatusEnum;
 import com.minh.esoft.common.exception.DataNotFoundException;
 import com.minh.esoft.common.exception.DataNotRelevantToUserException;
@@ -70,6 +69,21 @@ public class OrderService {
         ordersEntity.setPrice(price);
 
         ordersEntity = ordersRepository.save(ordersEntity);
+        return OrdersMapper.INSTANCE.map2OrderResponse(ordersEntity);
+    }
+
+    public OrderResponse getOrderById(Long id) throws DataNotFoundException, DataNotRelevantToUserException {
+        Optional<OrdersEntity> optional = ordersRepository.findById(id);
+        if (optional.isEmpty()) {
+            throw new DataNotFoundException();
+        }
+
+        OrdersEntity ordersEntity = optional.get();
+        JwtUserDetail jwtUserDetail = (JwtUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!Objects.equals(ordersEntity.getUserId(), jwtUserDetail.getAccountId())) {
+            throw new DataNotRelevantToUserException();
+        }
+
         return OrdersMapper.INSTANCE.map2OrderResponse(ordersEntity);
     }
 

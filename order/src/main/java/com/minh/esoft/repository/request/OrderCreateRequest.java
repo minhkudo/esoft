@@ -8,10 +8,14 @@ import com.minh.esoft.common.enums.validation.EnumNamePattern;
 import com.minh.esoft.common.enums.validation.ValueOfEnum;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderCreateRequest {
     @NotNull
     private String name;
