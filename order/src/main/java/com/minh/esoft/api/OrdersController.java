@@ -24,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/order")
 @AllArgsConstructor
+@PreAuthorize("hasAuthority('CUSTOMER')")
 public class OrdersController {
     private final OrderService orderService;
 
@@ -54,21 +55,18 @@ public class OrdersController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderCreateRequest orderCreateRequest) {
         OrderResponse orderResponse = orderService.createOrder(orderCreateRequest);
         return BaseResponse.success(orderResponse);
     }
 
     @PutMapping("/{id}")
-//    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<?> updateOrder(@PathVariable Long id, @RequestBody @Valid OrderUpdateRequest orderUpdateRequest) throws DataNotFoundException, DataNotRelevantToUserException, DataNotUpdateException {
         OrderResponse orderResponse = orderService.updateOrder(id, orderUpdateRequest);
         return BaseResponse.success(orderResponse);
     }
 
     @DeleteMapping("/{id}")
-//    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<?> deleteOrder(@PathVariable Long id) throws DataNotFoundException, DataNotUpdateException, DataNotRelevantToUserException {
         boolean isDelete = orderService.deleteOrder(id);
         return BaseResponse.success(isDelete);

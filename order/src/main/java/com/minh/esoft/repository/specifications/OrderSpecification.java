@@ -13,10 +13,10 @@ public class OrderSpecification {
 
     public Specification<OrdersEntity> userId(Long userId) {
         return (root, query, criteriaBuilder) -> {
-            if (userId != null) {
+            if (userId == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("userId"), (Object) null);
+            return criteriaBuilder.equal(root.get("userId"), userId);
         };
     }
 
