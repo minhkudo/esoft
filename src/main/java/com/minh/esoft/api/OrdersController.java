@@ -54,6 +54,7 @@ public class OrdersController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderCreateRequest orderCreateRequest) {
         OrderResponse orderResponse = orderService.createOrder(orderCreateRequest);
         return BaseResponse.success(orderResponse);
