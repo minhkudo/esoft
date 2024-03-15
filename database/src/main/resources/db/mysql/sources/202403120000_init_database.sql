@@ -26,6 +26,7 @@ create table if not exists `orders` (
   `notes` varchar(255) DEFAULT NULL,
   `orders_category_code` varchar(255) NOT NULL,
   `quantity` bigint(20) NOT NULL DEFAULT '0',
+  `price` double NOT NULL DEFAULT '0',
   `orders_status` varchar(255) NOT NULL,
   `orders_service_code` varchar(255) NOT NULL,
   `user_id` bigint(20) NOT NULL,

@@ -42,6 +42,9 @@ public class OrdersEntity extends BaseEntity {
     @Column(name = "quantity")
     private Long quantity;
 
+    @Column(name = "price")
+    private Double price;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "orders_status")
     private OrderStatusEnum orderStatus;

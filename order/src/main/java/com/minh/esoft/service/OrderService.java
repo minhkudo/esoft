@@ -1,6 +1,7 @@
 package com.minh.esoft.service;
 
 import com.minh.esoft.auth.JwtUserDetail;
+import com.minh.esoft.common.enums.OrderCategoryEnum;
 import com.minh.esoft.common.enums.OrderStatusEnum;
 import com.minh.esoft.common.exception.DataNotFoundException;
 import com.minh.esoft.common.exception.DataNotRelevantToUserException;
@@ -64,6 +65,9 @@ public class OrderService {
         OrdersEntity ordersEntity = OrdersMapper.INSTANCE.map2CreateOrderEntity(orderCreateRequest);
         ordersEntity.setCode(orderCode);
         ordersEntity.setOrderStatus(OrderStatusEnum.INITIAL);
+
+        double price = ordersEntity.getOrderCategoryCode().getPrice() * ordersEntity.getOrderServiceCode().getRate() * ordersEntity.getQuantity();
+        ordersEntity.setPrice(price);
 
         ordersEntity = ordersRepository.save(ordersEntity);
         return OrdersMapper.INSTANCE.map2OrderResponse(ordersEntity);
