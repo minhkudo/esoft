@@ -11,7 +11,9 @@ import com.minh.esoft.common.exception.DataNotUpdateException;
 import com.minh.esoft.repository.OrdersRepository;
 import com.minh.esoft.repository.entity.AccountEntity;
 import com.minh.esoft.repository.entity.OrdersEntity;
+import com.minh.esoft.repository.mapper.OrdersMapper;
 import com.minh.esoft.repository.request.OrderCreateRequest;
+import com.minh.esoft.repository.request.OrderQueryRequest;
 import com.minh.esoft.repository.request.OrderUpdateRequest;
 import com.minh.esoft.repository.response.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,12 +23,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,16 +60,6 @@ class OrderServiceUnitTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-//        OrdersEntity order1 = mockOrderEntity(1L, "Edit Photo 1", null, null, OrderCategoryEnum.LUXURY, 1L, OrderStatusEnum.INITIAL, OrderServiceEnum.PHOTO_EDITING, 1L);
-//        OrdersEntity order2 = mockOrderEntity(2L, "Edit Photo 2", null, null, OrderCategoryEnum.SUPER_LUXURY, 2L, OrderStatusEnum.CANCELLED, OrderServiceEnum.PHOTO_EDITING, 2L);
-//        OrdersEntity order3 = mockOrderEntity(2L, "Edit Photo 3", null, null, OrderCategoryEnum.SUPREME_LUXURY, 3L, OrderStatusEnum.DONE, OrderServiceEnum.PHOTO_EDITING, 1L);
-//        OrdersEntity order4 = mockOrderEntity(1L, "Edit Video 1", null, null, OrderCategoryEnum.LUXURY, 1L, OrderStatusEnum.PROCESS, OrderServiceEnum.VIDEO_EDITING, 2L);
-//        OrdersEntity order5 = mockOrderEntity(2L, "Edit Video 2", null, null, OrderCategoryEnum.SUPER_LUXURY, 2L, OrderStatusEnum.SHIPPING, OrderServiceEnum.VIDEO_EDITING, 1L);
-//        OrdersEntity order6 = mockOrderEntity(2L, "Edit Video 3", null, null, OrderCategoryEnum.SUPREME_LUXURY, 3L, OrderStatusEnum.INITIAL, OrderServiceEnum.VIDEO_EDITING, 2L);
-
-//        when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2, order3, order4, order5, order6));
-
     }
 
     private OrdersEntity mockOrderEntity(Long id, String name, String description, String notes, OrderCategoryEnum orderCategoryCode, Long quantity, OrderStatusEnum orderStatus, OrderServiceEnum orderServiceCode, Long userId) {
@@ -79,6 +78,25 @@ class OrderServiceUnitTest {
 
     @Test
     void getOrder() {
+        OrdersEntity order1 = mockOrderEntity(1L, "Edit Photo 1", null, null, OrderCategoryEnum.LUXURY, 1L, OrderStatusEnum.INITIAL, OrderServiceEnum.PHOTO_EDITING, 1L);
+        OrdersEntity order2 = mockOrderEntity(2L, "Edit Photo 2", null, null, OrderCategoryEnum.SUPER_LUXURY, 2L, OrderStatusEnum.CANCELLED, OrderServiceEnum.PHOTO_EDITING, 2L);
+        OrdersEntity order3 = mockOrderEntity(2L, "Edit Photo 3", null, null, OrderCategoryEnum.SUPREME_LUXURY, 3L, OrderStatusEnum.DONE, OrderServiceEnum.PHOTO_EDITING, 1L);
+        OrdersEntity order4 = mockOrderEntity(1L, "Edit Video 1", null, null, OrderCategoryEnum.LUXURY, 1L, OrderStatusEnum.PROCESS, OrderServiceEnum.VIDEO_EDITING, 2L);
+        OrdersEntity order5 = mockOrderEntity(2L, "Edit Video 2", null, null, OrderCategoryEnum.SUPER_LUXURY, 2L, OrderStatusEnum.SHIPPING, OrderServiceEnum.VIDEO_EDITING, 1L);
+        OrdersEntity order6 = mockOrderEntity(2L, "Edit Video 3", null, null, OrderCategoryEnum.SUPREME_LUXURY, 3L, OrderStatusEnum.INITIAL, OrderServiceEnum.VIDEO_EDITING, 2L);
+
+        AccountEntity accountEntity = new AccountEntity(1L, "minh", "123456", "CUSTOMER", AccountStatusEnum.ACTIVE);
+        when(authentication.getPrincipal()).thenReturn(new JwtUserDetail(accountEntity));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        OrderQueryRequest orderQueryRequest = OrderQueryRequest.builder().build();
+        int page = 0;
+        int size = 10;
+        when(orderRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(order1, order2, order3, order4, order5, order6), PageRequest.of(page, size), 0));
+        Page<OrderResponse> orderResponses = orderService.getOrder(page, size, orderQueryRequest);
+
+        assertThat(orderResponses).isNotNull();
+        assertThat(orderResponses.getTotalPages()).isEqualTo(1);
     }
 
     @Test
@@ -176,6 +194,75 @@ class OrderServiceUnitTest {
     }
 
     @Test
-    void deleteOrder() {
+    void updateOrderSuccess() throws DataNotFoundException, DataNotUpdateException, DataNotRelevantToUserException {
+        OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(null, null, OrderCategoryEnum.LUXURY, 2L, OrderServiceEnum.PHOTO_EDITING);
+        OrdersEntity order = mockOrderEntity(1L, "Edit Photo", null, null, OrderCategoryEnum.LUXURY, 1L, OrderStatusEnum.INITIAL, OrderServiceEnum.PHOTO_EDITING, 1L);
+
+        when(orderRepository.findById(any(Long.class))).thenReturn(Optional.of(order));
+        OrdersMapper.INSTANCE.mapToOrderEntity(order, orderUpdateRequest);
+        when(orderRepository.save(any(OrdersEntity.class))).thenReturn(order);
+
+        AccountEntity accountEntity = new AccountEntity(1L, "minh", "123456", "CUSTOMER", AccountStatusEnum.ACTIVE);
+        when(authentication.getPrincipal()).thenReturn(new JwtUserDetail(accountEntity));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        OrderResponse orderResponse = orderService.updateOrder(1L, orderUpdateRequest);
+        assertNotNull(orderResponse);
+        assertEquals(order.getName(), orderResponse.getName());
+        assertEquals(order.getOrderStatus(), orderResponse.getOrderStatus());
+        assertEquals(orderUpdateRequest.getOrderServiceCode(), orderResponse.getOrderServiceCode());
+        assertEquals(order.getUserId(), accountEntity.getId());
+        assertEquals(orderUpdateRequest.getQuantity(), orderResponse.getQuantity());
+    }
+
+    @Test
+    void deleteOrderNotFound() {
+        when(orderRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(null));
+
+        assertThatThrownBy(() -> orderService.deleteOrder(1L))
+                .isInstanceOf(DataNotFoundException.class);
+    }
+
+    @Test
+    void deleteOrderNotRelevantToUserException() {
+        OrdersEntity order = mockOrderEntity(1L, "Edit Photo", null, null, OrderCategoryEnum.LUXURY, 1L, OrderStatusEnum.INITIAL, OrderServiceEnum.PHOTO_EDITING, 1L);
+        AccountEntity accountEntity = new AccountEntity(2L, "minh", "123456", "CUSTOMER", AccountStatusEnum.ACTIVE);
+        when(orderRepository.findById(any(Long.class))).thenReturn(Optional.of(order));
+
+        when(authentication.getPrincipal()).thenReturn(new JwtUserDetail(accountEntity));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        assertThatThrownBy(() -> orderService.deleteOrder(1L))
+                .isInstanceOf(DataNotRelevantToUserException.class);
+    }
+
+    @Test
+    void deleteOrderNotUpdateException() {
+        OrdersEntity order = mockOrderEntity(1L, "Edit Photo", null, null, OrderCategoryEnum.LUXURY, 1L, OrderStatusEnum.PROCESS, OrderServiceEnum.PHOTO_EDITING, 1L);
+        AccountEntity accountEntity = new AccountEntity(1L, "minh", "123456", "CUSTOMER", AccountStatusEnum.ACTIVE);
+        when(orderRepository.findById(any(Long.class))).thenReturn(Optional.of(order));
+
+        when(authentication.getPrincipal()).thenReturn(new JwtUserDetail(accountEntity));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        assertThatThrownBy(() -> orderService.deleteOrder(1L))
+                .isInstanceOf(DataNotUpdateException.class);
+    }
+
+    @Test
+    void deleteOrderSuccess() throws DataNotFoundException, DataNotUpdateException, DataNotRelevantToUserException {
+        OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(null, null, OrderCategoryEnum.LUXURY, 2L, OrderServiceEnum.PHOTO_EDITING);
+        OrdersEntity order = mockOrderEntity(1L, "Edit Photo", null, null, OrderCategoryEnum.LUXURY, 1L, OrderStatusEnum.INITIAL, OrderServiceEnum.PHOTO_EDITING, 1L);
+
+        when(orderRepository.findById(any(Long.class))).thenReturn(Optional.of(order));
+        OrdersMapper.INSTANCE.mapToOrderEntity(order, orderUpdateRequest);
+        when(orderRepository.save(any(OrdersEntity.class))).thenReturn(order);
+
+        AccountEntity accountEntity = new AccountEntity(1L, "minh", "123456", "CUSTOMER", AccountStatusEnum.ACTIVE);
+        when(authentication.getPrincipal()).thenReturn(new JwtUserDetail(accountEntity));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        boolean isDeleted = orderService.deleteOrder(1L);
+        assertEquals(isDeleted, true);
     }
 }
