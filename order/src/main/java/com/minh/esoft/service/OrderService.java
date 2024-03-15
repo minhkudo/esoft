@@ -51,7 +51,7 @@ public class OrderService {
             specs = specs.and(OrderSpecification.createdAtFrom(Instant.ofEpochSecond(orderQueryRequest.getCreatedAtFrom())));
         }
         if (orderQueryRequest.getCreatedAtTo() != null) {
-            specs = specs.and(OrderSpecification.createdAtFrom(Instant.ofEpochSecond(orderQueryRequest.getCreatedAtTo())));
+            specs = specs.and(OrderSpecification.createdAtTo(Instant.ofEpochSecond(orderQueryRequest.getCreatedAtTo())));
         }
 
         Pageable pageable = PageRequest.of(page, size);
