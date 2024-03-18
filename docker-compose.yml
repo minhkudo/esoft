@@ -1,0 +1,24 @@
+version: '3'
+
+networks:
+  devops-network:
+    driver: bridge
+
+services:
+  mysql:
+    container_name: mysql-devops
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 33066:3306
+    networks:
+      - devops-network
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    #    entrypoint: sh -c "/init.sh"
+    environment:
+      - MYSQL_ROOT_PASSWORD=minhkudo
+      - MYSQL_PASSWORD=7Y2Cw5mebRpVSH8s
+      - MYSQL_USER=minh_esoft
+      - MYSQL_DATABASE=minh_esoft
